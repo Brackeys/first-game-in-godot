@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cuv4vme4rwno0"]
+[gd_scene load_steps=18 format=3 uid="uid://cuv4vme4rwno0"]
 
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_l4ihi"]
 [ext_resource type="PackedScene" uid="uid://dqnaqj8yb6hwd" path="res://scenes/player.tscn" id="1_rbmkf"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://dtrbka1ef726o" path="res://scenes/killzone.tscn" id="5_x8euu"]
 [ext_resource type="PackedScene" uid="uid://d2w2i5h0lhc6l" path="res://scenes/slime.tscn" id="6_l0s6b"]
 [ext_resource type="FontFile" uid="uid://dbjl1e6kdxpl6" path="res://assets/fonts/PixelOperator8.ttf" id="7_8cblx"]
+[ext_resource type="Script" path="res://scripts/finish_line.gd" id="10_nyxvp"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ashvg"]
 texture = ExtResource("2_r1crl")
@@ -416,6 +417,21 @@ sources/0 = SubResource("TileSetAtlasSource_ashvg")
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_cn5tm"]
 
+[sub_resource type="Animation" id="Animation_apgth"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(370, 52)]
+}
+
 [sub_resource type="Animation" id="Animation_bm7kf"]
 resource_name = "move"
 length = 1.5
@@ -433,26 +449,14 @@ tracks/0/keys = {
 "values": [Vector2(370, 52), Vector2(462, 52)]
 }
 
-[sub_resource type="Animation" id="Animation_apgth"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(370, 52)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_xuk5v"]
 _data = {
 "RESET": SubResource("Animation_apgth"),
 "move": SubResource("Animation_bm7kf")
 }
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2186x"]
+size = Vector2(33, 83)
 
 [node name="Game" type="Node2D"]
 
@@ -530,8 +534,9 @@ position = Vector2(584, -108)
 [node name="Platform" parent="Platforms" instance=ExtResource("3_cmfc3")]
 position = Vector2(32, 9)
 
-[node name="Platform2" parent="Platforms" instance=ExtResource("3_cmfc3")]
+[node name="Platform2" parent="Platforms" node_paths=PackedStringArray("animation_player_optional") instance=ExtResource("3_cmfc3")]
 position = Vector2(370, 52)
+animation_player_optional = NodePath("AnimationPlayer")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Platforms/Platform2"]
 libraries = {
@@ -584,3 +589,54 @@ theme_override_fonts/font = ExtResource("7_8cblx")
 theme_override_font_sizes/font_size = 8
 text = "Great job!"
 horizontal_alignment = 1
+
+[node name="MultiplayerHUD" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+offset_left = -110.0
+offset_bottom = 35.0
+
+[node name="Panel" type="Panel" parent="MultiplayerHUD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MultiplayerHUD/Panel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HostGame" type="Button" parent="MultiplayerHUD/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_nlliu")
+theme_override_font_sizes/font_size = 8
+text = "Host New Game"
+
+[node name="JoinAsPlayer2" type="Button" parent="MultiplayerHUD/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("7_8cblx")
+theme_override_font_sizes/font_size = 8
+text = "Join as Player 2"
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://scenes/multiplayer_player.tscn")
+spawn_path = NodePath("../Players")
+spawn_limit = 2
+
+[node name="Players" type="Node2D" parent="."]
+
+[node name="FinishLine" type="Area2D" parent="."]
+collision_mask = 2
+script = ExtResource("10_nyxvp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FinishLine"]
+position = Vector2(622.5, -136.5)
+shape = SubResource("RectangleShape2D_2186x")
+
+[connection signal="pressed" from="MultiplayerHUD/Panel/VBoxContainer/HostGame" to="GameManager" method="become_host"]
+[connection signal="pressed" from="MultiplayerHUD/Panel/VBoxContainer/JoinAsPlayer2" to="GameManager" method="join_as_player_2"]
+[connection signal="body_entered" from="FinishLine" to="FinishLine" method="_on_body_entered"]

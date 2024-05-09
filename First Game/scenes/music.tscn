@@ -4,5 +4,4 @@
 
 [node name="Music" type="AudioStreamPlayer2D"]
 stream = ExtResource("1_q0dvm")
-autoplay = true
 bus = &"Music"
