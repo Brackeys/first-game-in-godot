@@ -1,0 +1,62 @@
+[gd_scene load_steps=9 format=3 uid="uid://2k0ugsqvv1w0"]
+
+[ext_resource type="Script" uid="uid://goe1lbji33as" path="res://scripts/stag.gd" id="1_4qv3t"]
+[ext_resource type="Texture2D" uid="uid://csmmeuuvubcvj" path="res://assets/sprites/stag-run.png" id="2_o6nqm"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lxxkn"]
+atlas = ExtResource("2_o6nqm")
+region = Rect2(0, 0, 200, 168)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1gf16"]
+atlas = ExtResource("2_o6nqm")
+region = Rect2(200, 0, 200, 168)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pcdg6"]
+atlas = ExtResource("2_o6nqm")
+region = Rect2(400, 0, 200, 168)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3m58x"]
+atlas = ExtResource("2_o6nqm")
+region = Rect2(600, 0, 200, 168)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_milre"]
+atlas = ExtResource("2_o6nqm")
+region = Rect2(800, 0, 200, 168)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_uj816"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lxxkn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1gf16")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pcdg6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3m58x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_milre")
+}],
+"loop": true,
+"name": &"default",
+"speed": 9.0
+}]
+
+[node name="Stag" type="Node2D"]
+script = ExtResource("1_4qv3t")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_uj816")
+autoplay = "default"
+
+[node name="RayCastRight" type="RayCast2D" parent="."]
+position = Vector2(0, -7)
+target_position = Vector2(9, 0)
+
+[node name="RayCastLeft" type="RayCast2D" parent="."]
+position = Vector2(0, -7)
+target_position = Vector2(-9, 0)

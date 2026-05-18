@@ -1,0 +1,88 @@
+[gd_scene load_steps=11 format=3 uid="uid://d4ido5gbafmvf"]
+
+[ext_resource type="Script" uid="uid://2xdd5mpitxlx" path="res://npc-animal.gd" id="1_um1v3"]
+[ext_resource type="Texture2D" uid="uid://dg3f1f6sf7lek" path="res://assets/sprites/Rats.png" id="2_157av"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4w1yf"]
+atlas = ExtResource("2_157av")
+region = Rect2(144, 96, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mgmj5"]
+atlas = ExtResource("2_157av")
+region = Rect2(192, 96, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wgqj7"]
+atlas = ExtResource("2_157av")
+region = Rect2(240, 96, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_um1v3"]
+atlas = ExtResource("2_157av")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_157av"]
+atlas = ExtResource("2_157av")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_noxah"]
+atlas = ExtResource("2_157av")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_abwhg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4w1yf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mgmj5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wgqj7")
+}],
+"loop": true,
+"name": &"default",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_um1v3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_157av")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_noxah")
+}],
+"loop": true,
+"name": &"stop",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0ylhi"]
+size = Vector2(53, 23.25)
+
+[node name="npc-animal" type="Node2D"]
+z_index = 10
+script = ExtResource("1_um1v3")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-9, 37)
+sprite_frames = SubResource("SpriteFrames_abwhg")
+autoplay = "default"
+frame_progress = 0.2910237
+
+[node name="BodyHitbox" type="Area2D" parent="."]
+position = Vector2(0, -7)
+collision_layer = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BodyHitbox"]
+position = Vector2(-11, 54.625)
+shape = SubResource("RectangleShape2D_0ylhi")
+
+[node name="RayCastLeft" type="RayCast2D" parent="."]
+position = Vector2(0, -7)
+target_position = Vector2(-9, 0)
+
+[node name="RayCastRight" type="RayCast2D" parent="."]
+position = Vector2(0, -7)
+target_position = Vector2(9, 0)

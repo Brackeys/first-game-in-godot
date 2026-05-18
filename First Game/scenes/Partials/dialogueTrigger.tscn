@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://cr6airr3bwhp7"]
+
+[ext_resource type="Script" uid="uid://b2ahosn607utc" path="res://scripts/dialogue_trigger.gd" id="1_bb7ta"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5mfj3"]
+size = Vector2(20, 372)
+
+[node name="Node2D" type="Node2D"]
+
+[node name="DialogueTrigger" type="Area2D" parent="."]
+script = ExtResource("1_bb7ta")
+
+[node name="Panic" type="CollisionShape2D" parent="DialogueTrigger"]
+light_mask = 3
+position = Vector2(0, 176)
+shape = SubResource("RectangleShape2D_5mfj3")

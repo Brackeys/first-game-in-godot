@@ -1,0 +1,7 @@
+[gd_scene load_steps=0 format=3 uid="uid://hocdix0qn36w"]
+
+[node name="Decor Lights" type="Node2D"]
+
+[node name="On" type="Sprite2D" parent="."]
+
+[node name="Off" type="Sprite2D" parent="."]

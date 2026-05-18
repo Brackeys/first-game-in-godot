@@ -1,0 +1,77 @@
+[gd_scene load_steps=10 format=3 uid="uid://d2w2i5h0lhc6l"]
+
+[ext_resource type="Script" uid="uid://b3s73f3kd1wwa" path="res://scenes/Partials/slime.gd" id="1_x1781"]
+[ext_resource type="Texture2D" uid="uid://b34sg6w04esaf" path="res://assets/sprites/Character-Enemy.png" id="3_pjw23"]
+[ext_resource type="Script" uid="uid://ca4odte7t8rsn" path="res://scenes/Partials/head_hitbox.gd" id="3_x1781"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_u4xjq"]
+size = Vector2(125, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x1781"]
+atlas = ExtResource("3_pjw23")
+region = Rect2(0, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_voveg"]
+atlas = ExtResource("3_pjw23")
+region = Rect2(200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_16mar"]
+atlas = ExtResource("3_pjw23")
+region = Rect2(400, 0, 200, 200)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a8uf2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x1781")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_voveg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_16mar")
+}],
+"loop": true,
+"name": &"default",
+"speed": 6.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x1781"]
+size = Vector2(124, 20)
+
+[node name="Slime" type="CharacterBody2D"]
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("1_x1781")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-6.75, 33)
+scale = Vector2(0.5, 0.5)
+shape = SubResource("RectangleShape2D_u4xjq")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-4.5, 18.5)
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_a8uf2")
+autoplay = "default"
+frame_progress = 0.14103311
+
+[node name="RayCastLeft" type="RayCast2D" parent="."]
+position = Vector2(-31, 34)
+scale = Vector2(0.5, 0.5)
+target_position = Vector2(-30, 0)
+
+[node name="RayCastRight" type="RayCast2D" parent="."]
+position = Vector2(10, 34)
+scale = Vector2(0.5, 0.5)
+target_position = Vector2(36, 0)
+
+[node name="HeadHitbox" type="Area2D" parent="."]
+position = Vector2(0, 1)
+scale = Vector2(0.5, 0.5)
+collision_layer = 2
+script = ExtResource("3_x1781")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HeadHitbox"]
+position = Vector2(-14, -4)
+shape = SubResource("RectangleShape2D_x1781")

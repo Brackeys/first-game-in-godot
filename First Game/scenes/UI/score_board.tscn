@@ -1,0 +1,88 @@
+[gd_scene load_steps=11 format=4 uid="uid://13bxb8josfp1"]
+
+[ext_resource type="Script" uid="uid://chpl4eo2v8wq0" path="res://scripts/score_board.gd" id="1_ek31y"]
+[ext_resource type="FontFile" uid="uid://dbjl1e6kdxpl6" path="res://assets/fonts/PixelOperator8.ttf" id="2_qnge1"]
+[ext_resource type="Texture2D" uid="uid://bic3osxkltpg" path="res://assets/sprites/pickup.png" id="3_t8f0e"]
+[ext_resource type="Texture2D" uid="uid://d0rpkhm51dhru" path="res://assets/sprites/6th-Flanders-Tileset-2.png" id="4_2c4ns"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_dvfkj"]
+font = ExtResource("2_qnge1")
+font_size = 8
+
+[sub_resource type="LabelSettings" id="LabelSettings_qnge1"]
+font = ExtResource("2_qnge1")
+font_size = 8
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fnf6i"]
+texture = ExtResource("3_t8f0e")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+5:2/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_dn7rr"]
+sources/0 = SubResource("TileSetAtlasSource_fnf6i")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ersyl"]
+texture = ExtResource("4_2c4ns")
+11:9/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_lvggh"]
+sources/0 = SubResource("TileSetAtlasSource_ersyl")
+
+[node name="ScoreBoard" type="CanvasLayer"]
+script = ExtResource("1_ek31y")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_left = 60.0
+offset_top = 333.0
+offset_right = 140.0
+offset_bottom = 373.0
+
+[node name="ScoreLabel" type="Label" parent="MarginContainer"]
+z_index = 1
+layout_mode = 2
+text = "Score"
+label_settings = SubResource("LabelSettings_dvfkj")
+
+[node name="TimeLabel" type="Label" parent="."]
+z_index = 1
+offset_left = 482.0
+offset_top = 348.0
+offset_right = 525.0
+offset_bottom = 371.0
+text = "Time:"
+label_settings = SubResource("LabelSettings_qnge1")
+
+[node name="LivesLabel" type="Label" parent="."]
+z_index = 1
+offset_left = 260.0
+offset_top = 348.0
+offset_right = 320.0
+offset_bottom = 371.0
+text = "Lives: 3"
+label_settings = SubResource("LabelSettings_qnge1")
+
+[node name="Icons" type="TileMapLayer" parent="."]
+z_index = 2
+position = Vector2(0, 340)
+tile_map_data = PackedByteArray("AAABAAAAAAACAAIAAAACAAAAAAABAAAAAAA=")
+tile_set = SubResource("TileSet_dn7rr")
+
+[node name="Bg" type="TileMapLayer" parent="."]
+position = Vector2(0, 344)
+tile_map_data = PackedByteArray("AAAAAAAAAAALAAkAAAABAAAAAAALAAkAAAACAAAAAAALAAkAAAADAAAAAAALAAkAAAAEAAAAAAALAAkAAAAFAAAAAAALAAkAAAAGAAAAAAALAAkAAAAHAAAAAAALAAkAAAAIAAAAAAALAAkAAAAJAAAAAAALAAkAAAAKAAAAAAALAAkAAAALAAAAAAALAAkAAAAMAAAAAAALAAkAAAANAAAAAAALAAkAAAAOAAAAAAALAAkAAAAPAAAAAAALAAkAAAAQAAAAAAALAAkAAAARAAAAAAALAAkAAAASAAAAAAALAAkAAAATAAAAAAALAAkAAAAUAAAAAAALAAkAAAAVAAAAAAALAAkAAAAWAAAAAAALAAkAAAAXAAAAAAALAAkAAAAYAAAAAAALAAkAAAAZAAAAAAALAAkAAAAaAAAAAAALAAkAAAAbAAAAAAALAAkAAAAcAAAAAAALAAkAAAAdAAAAAAALAAkAAAAeAAAAAAALAAkAAAAfAAAAAAALAAkAAAAgAAAAAAALAAkAAAAhAAAAAAALAAkAAAAiAAAAAAALAAkAAAAjAAAAAAALAAkAAAAkAAAAAAALAAkAAAAlAAAAAAALAAkAAAAmAAAAAAALAAkAAAAnAAAAAAALAAkAAAA=")
+tile_set = SubResource("TileSet_lvggh")

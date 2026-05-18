@@ -1,0 +1,126 @@
+[gd_scene load_steps=6 format=3 uid="uid://cji5snssqesai"]
+
+[ext_resource type="Script" uid="uid://bq7s0n1f20ac3" path="res://scripts/credits.gd" id="1_credits"]
+[ext_resource type="FontFile" uid="uid://dbjl1e6kdxpl6" path="res://assets/fonts/PixelOperator8.ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://uoaunww7uf14" path="res://assets/fonts/MonaSans-SemiBold.ttf" id="3_0ctdu"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("2_font")
+font_size = 24
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2ckv8"]
+
+[node name="Credits" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_credits")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.03, 0.03, 0.05, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 20.0
+offset_right = 582.0
+offset_bottom = 339.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "CREDITS"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="1" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("3_0ctdu")
+theme_override_font_sizes/font_size = 15
+text = "Game Design
+------------
+All of us!
+
+Project Management
+------------
+Roxanne Seaton
+Violet Aveline
+p:ear's Wired Wednesday
+Made possible with partnership
+and resources from p:ear"
+
+[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(35, 0)
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_2ckv8")
+
+[node name="2" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("3_0ctdu")
+theme_override_font_sizes/font_size = 15
+text = "Story
+------------
+Precious
+Ozzy
+
+Game Programmers
+------------
+Aventurine Atalanta
+Roxanne Seaton
+"
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(35, 0)
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_2ckv8")
+
+[node name="3" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("3_0ctdu")
+theme_override_font_sizes/font_size = 15
+text = "Art
+------------
+Roxanne Seaton
+Cormac Powers
+Vincent Romero
+Aventurine Atalanta
+Precious
+
+Music
+------------
+Noah"
+
+[node name="BackButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -303.0
+offset_top = 16.0
+offset_right = -197.0
+offset_bottom = -306.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.88920903, 0.21322438, 0.67326546, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 16
+text = "Back - B"

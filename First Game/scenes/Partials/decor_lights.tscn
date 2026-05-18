@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bfovmkhkpomi6"]
+
+[ext_resource type="Script" uid="uid://dgw6i82tvjk3l" path="res://interact/decor_lights.gd" id="1_wp42y"]
+
+[node name="Decor Lights" type="Node2D"]
+script = ExtResource("1_wp42y")
+
+[node name="On" type="Sprite2D" parent="."]
+
+[node name="Off" type="Sprite2D" parent="."]

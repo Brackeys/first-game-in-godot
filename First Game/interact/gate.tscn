@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://ce5c1ocgf581o"]
+
+[ext_resource type="Script" uid="uid://dchh4lfepx7f5" path="res://gate.gd" id="1_15vrf"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3efw5"]
+
+[node name="Gate" type="Area2D"]
+script = ExtResource("1_15vrf")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_3efw5")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]

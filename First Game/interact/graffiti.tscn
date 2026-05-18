@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://c02yaxc87jiih"]
+
+[ext_resource type="Script" uid="uid://dk6g4yrtvo7b6" path="res://graffiti.gd" id="1_7niuw"]
+
+[node name="Graffiti" type="Node2D"]
+script = ExtResource("1_7niuw")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
