@@ -1,6 +1,6 @@
-[gd_scene load_steps=26 format=3 uid="uid://dqnaqj8yb6hwd"]
+[gd_scene format=3 uid="uid://dqnaqj8yb6hwd"]
 
-[ext_resource type="Script" path="res://scripts/player.gd" id="1_ofpvf"]
+[ext_resource type="Script" uid="uid://dhojb01i6t155" path="res://scripts/player.gd" id="1_ofpvf"]
 [ext_resource type="Texture2D" uid="uid://b8cmjj8vq3r8d" path="res://assets/sprites/knight.png" id="1_p3dy5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eq0sc"]
@@ -102,7 +102,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_5qbp8")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 10.0
 }, {
@@ -110,7 +110,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_m4p6y")
 }],
-"loop": true,
+"loop": 1,
 "name": &"jump",
 "speed": 5.0
 }, {
@@ -163,25 +163,42 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_wq37r")
 }],
-"loop": true,
+"loop": 1,
 "name": &"run",
 "speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eq0sc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_euih6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bvckt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5qbp8")
+}],
+"loop": 1,
+"name": &"squash",
+"speed": 5.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_bvcm0"]
 radius = 5.0
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" unique_id=1031002539]
 z_index = 5
 collision_layer = 2
 script = ExtResource("1_ofpvf")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=309854334]
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_81gkq")
-animation = &"jump"
+animation = &"squash"
 autoplay = "idle"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1258017050]
 position = Vector2(0, -5)
 shape = SubResource("CircleShape2D_bvcm0")
