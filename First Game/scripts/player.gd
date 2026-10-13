@@ -6,20 +6,33 @@ const JUMP_VELOCITY = -300.0
 const DASH_SPEED = 400.0
 const DASH_DURATION = 0.2
 const MAX_JUMPS = 2
-const MAX_AIR_DASHES = 1
+const MAX_DASHES = 1
 const CROUCH_SCALE = Vector2(1.2, 0.6)   
 const NORMAL_SCALE = Vector2(1.0, 1.0)
 const SQUASH_SPEED = 50.0                # velocidad de la transición
 const SPRITE_HALF_HEIGHT = 8.0           # la mitad de la altura de tu sprite en píxeles
+const EXHAUSTED_TEXTURE = preload("res://assets/sprites/knight_exhaustedt.png")
+const DASH_FLASH_SHADER = preload("res://shaders/dash_flash.gdshader")
+const FLASH_DURATION = 0.15              # duración del flash blanco al dashear
+const FLASH_STRENGTH = 0.6               # cuánto se acerca a blanco (0..1)
 
 var is_crouching = false
 var base_sprite_y = 0.0
 
 var jump_count = 0
-var air_dash_count = 0
+var dash_count = 0
 var is_dashing = false
 var dash_timer = 0.0
 var dash_dir = Vector2.RIGHT
+
+# Flash blanco al dashear
+var flash_timer = 0.0
+var flash_material: ShaderMaterial
+
+# Aspecto "exhausted": se muestra cuando no queda ningún dash disponible
+var is_exhausted = false
+var normal_frames: SpriteFrames
+var exhausted_frames: SpriteFrames
 
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
@@ -29,6 +42,35 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 func _ready():
 	# Guardamos la posición original del sprite para no desplazarlo
 	base_sprite_y = animated_sprite.position.y
+	# Preparamos una copia de las animaciones usando el atlas "exhausted"
+	normal_frames = animated_sprite.sprite_frames
+	exhausted_frames = _build_frames_with_atlas(normal_frames, EXHAUSTED_TEXTURE)
+	# Material para el flash blanco al dashear
+	flash_material = ShaderMaterial.new()
+	flash_material.shader = DASH_FLASH_SHADER
+	flash_material.set_shader_parameter("flash", 0.0)
+	animated_sprite.material = flash_material
+
+
+# Crea unas SpriteFrames nuevas partiendo de las originales, pero sustituyendo
+# el atlas de cada frame por la textura indicada. Así conservamos regiones,
+# animaciones, velocidades y duraciones sin tocar la escena.
+func _build_frames_with_atlas(source: SpriteFrames, atlas_texture: Texture2D) -> SpriteFrames:
+	var frames := SpriteFrames.new()
+	# SpriteFrames.new() trae una animación "default" que no necesitamos
+	if frames.has_animation("default"):
+		frames.remove_animation("default")
+	for anim in source.get_animation_names():
+		frames.add_animation(anim)
+		frames.set_animation_speed(anim, source.get_animation_speed(anim))
+		frames.set_animation_loop(anim, source.get_animation_loop(anim))
+		for i in source.get_frame_count(anim):
+			var src_frame = source.get_frame_texture(anim, i) as AtlasTexture
+			var new_frame = AtlasTexture.new()
+			new_frame.atlas = atlas_texture
+			new_frame.region = src_frame.region
+			frames.add_frame(anim, new_frame, source.get_frame_duration(anim, i))
+	return frames
 
 
 func _physics_process(delta):
@@ -42,6 +84,11 @@ func _physics_process(delta):
 			if velocity.y < 0:
 				velocity.y *= 0.5
 
+	# Flash blanco: se desvanece poco a poco tras iniciar el dash
+	if flash_timer > 0.0:
+		flash_timer = max(flash_timer - delta, 0.0)
+		flash_material.set_shader_parameter("flash", flash_timer / FLASH_DURATION * FLASH_STRENGTH)
+
 	# Gravedad (no se aplica durante el dash)
 	if not is_on_floor() and not is_dashing:
 		velocity.y += gravity * delta
@@ -49,10 +96,15 @@ func _physics_process(delta):
 	# Resetear contadores al tocar el suelo
 	if is_on_floor() and not is_dashing:
 		jump_count = 0
-		air_dash_count = 0
+		dash_count = 0
 	elif not is_on_floor() and jump_count == 0:
 		# Si caes de una plataforma sin saltar, pierdes el primer salto
 		jump_count = 1
+
+	# Aspecto "exhausted": sin dash recargado. En el suelo el dash se recarga,
+	# así que solo se muestra en el aire tras gastar el dash. Durante el propio
+	# dash se mantiene el aspecto normal, como en Celeste.
+	_set_exhausted(not is_dashing and not is_on_floor() and dash_count >= MAX_DASHES)
 
 	# Salto y doble salto
 	if Input.is_action_just_pressed("jump") and not is_dashing:
@@ -77,7 +129,7 @@ func _physics_process(delta):
 	# Iniciar dash
 	if Input.is_action_just_pressed("dash") and not is_dashing:
 		var on_floor = is_on_floor()
-		if on_floor or air_dash_count < MAX_AIR_DASHES:
+		if on_floor or dash_count < MAX_DASHES:
 			start_dash(input_vec, on_floor)
 
 	# Crouch: solo en el suelo y sin dash
@@ -136,12 +188,32 @@ func start_dash(input_vec: Vector2, on_floor: bool):
 	dash_timer = DASH_DURATION
 	dash_dir = dir
 
-	# Solo cuenta como dash aéreo si empiezas en el aire
-	if not on_floor:
-		air_dash_count += 1
+	# El dash siempre consume el dash. Si al terminar sigues en el suelo, se
+	# recarga en el siguiente frame, por lo que un dash horizontal a ras de
+	# suelo no lo gasta. Si el dash te despega (vertical/diagonal arriba, o al
+	# salir de una plataforma), se queda gastado hasta que vuelvas a aterrizar.
+	dash_count += 1
+
+	# Flash blanco al iniciar el dash
+	flash_timer = FLASH_DURATION
+	flash_material.set_shader_parameter("flash", FLASH_STRENGTH)
 
 	# Orientar el sprite según el dash
 	if dir.x > 0.1:
 		animated_sprite.flip_h = false
 	elif dir.x < -0.1:
 		animated_sprite.flip_h = true
+
+
+# Cambia entre el aspecto normal y el "exhausted", conservando la animación actual
+func _set_exhausted(value: bool):
+	if value == is_exhausted:
+		return
+	is_exhausted = value
+	var current_anim = animated_sprite.animation
+	var current_frame = animated_sprite.frame
+	animated_sprite.sprite_frames = exhausted_frames if is_exhausted else normal_frames
+	# Reanudamos la animación en el mismo frame para que se refresque la textura
+	# mostrada sin que el sprite dé un salto visible.
+	animated_sprite.play(current_anim)
+	animated_sprite.frame = current_frame
