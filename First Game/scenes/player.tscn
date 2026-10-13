@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dhojb01i6t155" path="res://scripts/player.gd" id="1_ofpvf"]
 [ext_resource type="Texture2D" uid="uid://b8cmjj8vq3r8d" path="res://assets/sprites/knight.png" id="1_p3dy5"]
+[ext_resource type="Texture2D" uid="uid://dl402vqyhs83q" path="res://assets/sprites/dash.png" id="3_qhqgy"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eq0sc"]
 atlas = ExtResource("1_p3dy5")
@@ -188,6 +189,30 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_bvcm0"]
 radius = 5.0
 
+[sub_resource type="Gradient" id="Gradient_dash_dot"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_dash_dot"]
+gradient = SubResource("Gradient_dash_dot")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dash"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 9.0
+direction = Vector3(-1, 0, 0)
+spread = 20.0
+initial_velocity_min = 50.0
+initial_velocity_max = 130.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.3
+scale_max = 0.7
+color = Color(1, 1, 1, 0.7)
+
 [node name="Player" type="CharacterBody2D" unique_id=1031002539]
 z_index = 5
 collision_layer = 2
@@ -202,3 +227,24 @@ autoplay = "idle"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1258017050]
 position = Vector2(0, -5)
 shape = SubResource("CircleShape2D_bvcm0")
+
+[node name="DashWind" type="GPUParticles2D" parent="." unique_id=278615542]
+z_index = -1
+position = Vector2(0, -12)
+emitting = false
+amount = 40
+texture = SubResource("GradientTexture2D_dash_dot")
+lifetime = 0.45
+process_material = SubResource("ParticleProcessMaterial_dash")
+
+[node name="DashCircle" type="Sprite2D" parent="." unique_id=703101160]
+visible = false
+z_index = -1
+position = Vector2(0, -12)
+texture = ExtResource("3_qhqgy")
+
+[node name="ArcaneCircle" type="Sprite2D" parent="." unique_id=1799866350]
+visible = false
+z_index = -2
+position = Vector2(0, -12)
+texture = ExtResource("3_qhqgy")
