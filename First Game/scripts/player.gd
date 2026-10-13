@@ -17,6 +17,9 @@ const FLASH_DURATION = 0.3              # duración del flash blanco al dashear
 const FLASH_STRENGTH = 0.8               # cuánto se acerca a blanco (0..1)
 const DASH_CIRCLE_TIME = 0.28            # duración del circulito tras el dash
 const DASH_CIRCLE_ANGLE_OFFSET = 0.0     # desfase de rotación del circulito (rad)
+const AFTERIMAGE_INTERVAL = 0.04         # cada cuánto se deja una copia tras de sí
+const AFTERIMAGE_LIFETIME = 0.2          # cuánto tarda la copia en desvanecerse
+const AFTERIMAGE_COLOR = Color(0.0, 0.334, 0.448, 0.5)  # tinte translúcido de la copia
 
 var is_crouching = false
 var base_sprite_y = 0.0
@@ -39,6 +42,7 @@ var exhausted_frames: SpriteFrames
 # Efectos del dash
 var dash_wind_material: ParticleProcessMaterial
 var dash_circle_tween: Tween
+var afterimage_timer = 0.0
 
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
@@ -101,6 +105,18 @@ func _physics_process(delta):
 	if flash_timer > 0.0:
 		flash_timer = max(flash_timer - delta, 0.0)
 		flash_material.set_shader_parameter("flash", flash_timer / FLASH_DURATION * FLASH_STRENGTH)
+
+	# Afterimage: activo siempre que el personaje se mueva (andar, correr,
+	# saltar/caer o dashear), dejando copias que se quedan atrás y se desvanecen,
+	# como en Symphony of the Night. Parado del todo no se genera (no habría rastro).
+	var is_moving = true
+	if is_moving:
+		afterimage_timer -= delta
+		if afterimage_timer <= 0.0:
+			_spawn_afterimage()
+			afterimage_timer = AFTERIMAGE_INTERVAL
+	else:
+		afterimage_timer = 0.0
 
 	# Gravedad (no se aplica durante el dash)
 	if not is_on_floor() and not is_dashing:
@@ -260,3 +276,24 @@ func _play_dash_vfx(dir: Vector2):
 	dash_circle_tween.tween_property(dash_circle, "scale", Vector2(1.5, 1.5), DASH_CIRCLE_TIME)
 	dash_circle_tween.parallel().tween_property(dash_circle, "modulate:a", 0.0, DASH_CIRCLE_TIME)
 	dash_circle_tween.tween_callback(dash_circle.hide)
+
+
+# Deja una copia translúcida del sprite actual en su posición, que se desvanece.
+# La copia usa "top_level" para quedarse clavada en el mundo aunque el personaje
+# siga moviéndose, y así va dibujando el rastro del dash (estilo Castlevania SotN).
+func _spawn_afterimage():
+	var ghost := Sprite2D.new()
+	ghost.texture = animated_sprite.sprite_frames.get_frame_texture(animated_sprite.animation, animated_sprite.frame)
+	ghost.flip_h = animated_sprite.flip_h
+	ghost.scale = animated_sprite.scale
+	# Un nivel por debajo del jugador. Se cuelga del MISMO padre que el jugador
+	# (no del jugador, para que no lo arrastre) y así el z_index sigue siendo
+	# relativo y queda por encima del TileMap pero detrás del personaje.
+	ghost.z_index = z_index - 1
+	ghost.modulate = AFTERIMAGE_COLOR
+	get_parent().add_child(ghost)
+	ghost.global_position = animated_sprite.global_position
+
+	var tween := ghost.create_tween()
+	tween.tween_property(ghost, "modulate:a", 0.0, AFTERIMAGE_LIFETIME)
+	tween.tween_callback(ghost.queue_free)
