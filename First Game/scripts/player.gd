@@ -106,10 +106,9 @@ func _physics_process(delta):
 		flash_timer = max(flash_timer - delta, 0.0)
 		flash_material.set_shader_parameter("flash", flash_timer / FLASH_DURATION * FLASH_STRENGTH)
 
-	# Afterimage: activo siempre que el personaje se mueva (andar, correr,
-	# saltar/caer o dashear), dejando copias que se quedan atrás y se desvanecen,
-	# como en Symphony of the Night. Parado del todo no se genera (no habría rastro).
-	var is_moving = true
+	# Afterimage: activo al moverse (andar, correr, saltar/caer), pero NO durante
+	# el dash, para no amontonar copias junto al wind y al círculo del dash.
+	var is_moving = not is_dashing
 	if is_moving:
 		afterimage_timer -= delta
 		if afterimage_timer <= 0.0:
@@ -279,8 +278,8 @@ func _play_dash_vfx(dir: Vector2):
 
 
 # Deja una copia translúcida del sprite actual en su posición, que se desvanece.
-# La copia usa "top_level" para quedarse clavada en el mundo aunque el personaje
-# siga moviéndose, y así va dibujando el rastro del dash (estilo Castlevania SotN).
+# La copia se cuelga del padre (no del jugador) para quedarse clavada en el mundo
+# aunque el personaje siga moviéndose, y así va dibujando su rastro (estilo SotN).
 func _spawn_afterimage():
 	var ghost := Sprite2D.new()
 	ghost.texture = animated_sprite.sprite_frames.get_frame_texture(animated_sprite.animation, animated_sprite.frame)
