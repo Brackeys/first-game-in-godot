@@ -13,10 +13,10 @@ const SQUASH_SPEED = 50.0                # velocidad de la transición
 const SPRITE_HALF_HEIGHT = 8.0           # la mitad de la altura de tu sprite en píxeles
 const EXHAUSTED_TEXTURE = preload("res://assets/sprites/knight_exhaustedt.png")
 const DASH_FLASH_SHADER = preload("res://shaders/dash_flash.gdshader")
-const FLASH_DURATION = 0.15              # duración del flash blanco al dashear
-const FLASH_STRENGTH = 0.6               # cuánto se acerca a blanco (0..1)
+const FLASH_DURATION = 0.3              # duración del flash blanco al dashear
+const FLASH_STRENGTH = 0.8               # cuánto se acerca a blanco (0..1)
 const DASH_CIRCLE_TIME = 0.28            # duración del circulito tras el dash
-const ARCANE_TIME = 0.4                  # duración del círculo arcano
+const DASH_CIRCLE_ANGLE_OFFSET = 0.0     # desfase de rotación del circulito (rad)
 
 var is_crouching = false
 var base_sprite_y = 0.0
@@ -39,14 +39,12 @@ var exhausted_frames: SpriteFrames
 # Efectos del dash
 var dash_wind_material: ParticleProcessMaterial
 var dash_circle_tween: Tween
-var arcane_tween: Tween
 
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 @onready var animated_sprite = $AnimatedSprite2D
 @onready var dash_wind = $DashWind
 @onready var dash_circle = $DashCircle
-@onready var arcane_circle = $ArcaneCircle
 
 
 func _ready():
@@ -60,11 +58,10 @@ func _ready():
 	flash_material.shader = DASH_FLASH_SHADER
 	flash_material.set_shader_parameter("flash", 0.0)
 	animated_sprite.material = flash_material
-	# Efectos del dash (partículas, circulito y círculo arcano)
+	# Efectos del dash (partículas y circulito)
 	dash_wind_material = dash_wind.process_material as ParticleProcessMaterial
 	dash_wind.emitting = false
 	dash_circle.visible = false
-	arcane_circle.visible = false
 
 
 # Crea unas SpriteFrames nuevas partiendo de las originales, pero sustituyendo
@@ -238,7 +235,7 @@ func _set_exhausted(value: bool):
 	animated_sprite.frame = current_frame
 
 
-# Lanza los efectos visuales del dash: viento, circulito y círculo arcano
+# Lanza los efectos visuales del dash: viento y circulito
 func _play_dash_vfx(dir: Vector2):
 	# "Detrás" = dirección opuesta al dash
 	var behind = -dir.normalized()
@@ -253,7 +250,10 @@ func _play_dash_vfx(dir: Vector2):
 		dash_circle_tween.kill()
 	dash_circle.visible = true
 	dash_circle.position = pivot + behind * 15.0
-	dash_circle.rotation = 0.0
+	# Rota el circulito para que "empuje" en la dirección del dash
+	# (abajo = abajo, diagonal = diagonal...). Si tu sprite no apunta hacia
+	# la derecha por defecto, ajusta DASH_CIRCLE_ANGLE_OFFSET.
+	dash_circle.rotation = dir.angle() + DASH_CIRCLE_ANGLE_OFFSET
 	dash_circle.scale = Vector2(0.5, 0.5)
 	dash_circle.modulate = Color(1, 1, 1, 1)
 	dash_circle_tween = create_tween()

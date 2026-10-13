@@ -190,7 +190,8 @@ animations = [{
 radius = 5.0
 
 [sub_resource type="Gradient" id="Gradient_dash_dot"]
-colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+offsets = PackedFloat32Array(0.030120483, 0.1746988, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.23529412, 1, 1, 1, 1, 1, 1, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_dash_dot"]
 gradient = SubResource("Gradient_dash_dot")
@@ -198,7 +199,7 @@ width = 32
 height = 32
 fill = 1
 fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(1, 0.5)
+fill_to = Vector2(0.84782606, 0.4)
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dash"]
 particle_flag_disable_z = true
@@ -231,20 +232,15 @@ shape = SubResource("CircleShape2D_bvcm0")
 [node name="DashWind" type="GPUParticles2D" parent="." unique_id=278615542]
 z_index = -1
 position = Vector2(0, -12)
+scale = Vector2(1, 0.7)
 emitting = false
-amount = 40
+amount = 14
 texture = SubResource("GradientTexture2D_dash_dot")
-lifetime = 0.45
+lifetime = 0.15000000000000002
 process_material = SubResource("ParticleProcessMaterial_dash")
 
 [node name="DashCircle" type="Sprite2D" parent="." unique_id=703101160]
 visible = false
 z_index = -1
-position = Vector2(0, -12)
-texture = ExtResource("3_qhqgy")
-
-[node name="ArcaneCircle" type="Sprite2D" parent="." unique_id=1799866350]
-visible = false
-z_index = -2
 position = Vector2(0, -12)
 texture = ExtResource("3_qhqgy")
